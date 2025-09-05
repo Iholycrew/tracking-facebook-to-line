@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>กรุณาเปิด LINE เพื่อดำเนินการต่อ</title>
+    <style>
+        :root { --facebook: #1877F2; --line: #06C755; --text: #111; --muted:#666; }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Thai", "Noto Sans", Helvetica, Arial, sans-serif;
+            color: var(--text);
+            background: #fff;
+        }
+        main {
+            min-height: 100dvh;
+            padding: 24px 16px calc(24px + env(safe-area-inset-bottom));
+            display: grid;
+            place-items: center;
+            gap: 28px;
+            text-align: center;
+        }
+        .logo {
+            width: 140px; height: 140px;
+            display: inline-grid; place-items: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.45;
+            font-weight: 500;
+        }
+        h1 b { font-weight: 800; }
+        .btn {
+            appearance: none;
+            border: 0;
+            cursor: pointer;
+            background: var(--line);
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            border-radius: 14px;
+            padding: 18px 20px;
+            width: min(680px, 92vw);
+            box-shadow: 0 6px 16px rgba(6,199,85,.25);
+            transition: transform .04s ease, filter .2s ease;
+        }
+        .btn:active { transform: translateY(1px); }
+        .btn:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            transform: none;
+            box-shadow: none;
+        }
+        .note {
+            font-size: 13px; color: var(--muted);
+        }
+        .status {
+            font-size: 14px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 16px 0;
+            max-width: min(680px, 92vw);
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .params-info {
+            font-size: 13px;
+            color: var(--muted);
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            text-align: left;
+            max-width: min(680px, 92vw);
+        }
+        .params-info h3 {
+            margin: 0 0 12px 0;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .params-info p {
+            margin: 6px 0;
+            word-break: break-all;
+        }
+        .platform-badge {
+            display: inline-block;
+            background: var(--facebook);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <main>
+        <!-- LINE Logo combination -->
+        <div class="logo" aria-hidden="true">
+        <!-- Official LINE Logo SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 320 320" role="img" aria-label="LINE logo">
+                <defs>
+                <style>.cls-1{fill:#06c755;}.cls-2{fill:#fff;}</style>
+                </defs>
+                <g id="Layer_2" data-name="Layer 2">
+                <g id="LINE_LOGO" data-name="LINE LOGO">
+                    <rect class="cls-1" width="320" height="320" rx="72.14"/>
+                    <path class="cls-2" d="M266.66,144.92c0-47.74-47.86-86.58-106.69-86.58S53.28,97.18,53.28,144.92c0,42.8,38,78.65,89.22,85.42,3.48.75,8.21,2.29,9.4,5.26,1.08,2.7.71,6.93.35,9.65,0,0-1.25,7.53-1.52,9.13-.47,2.7-2.15,10.55,9.24,5.76s61.44-36.18,83.82-61.95h0C259.25,181.24,266.66,164,266.66,144.92Z"/>
+                    <path class="cls-1" d="M231.16,172.49h-30a2,2,0,0,1-2-2v0h0V123.94h0v0a2,2,0,0,1,2-2h30a2,2,0,0,1,2,2v7.57a2,2,0,0,1-2,2H210.79v7.85h20.37a2,2,0,0,1,2,2V151a2,2,0,0,1-2,2H210.79v7.86h20.37a2,2,0,0,1,2,2v7.56A2,2,0,0,1,231.16,172.49Z"/>
+                    <path class="cls-1" d="M120.29,172.49a2,2,0,0,0,2-2v-7.56a2,2,0,0,0-2-2H99.92v-37a2,2,0,0,0-2-2H90.32a2,2,0,0,0-2,2v46.53h0v0a2,2,0,0,0,2,2h30Z"/>
+                    <rect class="cls-1" x="128.73" y="121.85" width="11.64" height="50.64" rx="2.04"/>
+                    <path class="cls-1" d="M189.84,121.85h-7.56a2,2,0,0,0-2,2v27.66l-21.3-28.77a1.2,1.2,0,0,0-.17-.21v0l-.12-.12,0,0-.11-.09-.06,0-.11-.08-.06,0-.11-.06-.07,0-.11,0-.07,0-.12,0-.08,0-.12,0h-.08l-.11,0h-7.71a2,2,0,0,0-2,2v46.56a2,2,0,0,0,2,2h7.57a2,2,0,0,0,2-2V142.81l21.33,28.8a2,2,0,0,0,.52.52h0l.12.08.06,0,.1.05.1,0,.07,0,.14,0h0a2.42,2.42,0,0,0,.54.07h7.52a2,2,0,0,0,2-2V123.89A2,2,0,0,0,189.84,121.85Z"/>
+                </g>
+                </g>
+            </svg>
+        </div>
+
+        <!-- <div class="platform-badge">FACEBOOK PLATFORM</div> -->
+        <!-- <h1 id="mainTitle">กำลังเตรียม<b>เปิด LINE</b></h1> -->
+         <h1>กรุณาเปิด <b>LINE</b> เพื่อดำเนินการต่อ</h1>
+
+        <button class="btn" id="redirectBtn">
+            <span id="btnText">เปิด LINE</span>
+        </button>
+        
+        <div class="status hidden" id="status"></div>
+        <div class="params-info hidden" id="urlParams"></div>
+        <div class="note hidden" id="hint">กำลังประมวลผล parameters และเตรียมส่งต่อไปยัง LINE</div>
+    </main>
+
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        const redirectBtn = document.getElementById('redirectBtn');
+        const status = document.getElementById('status');
+        const urlParams = document.getElementById('urlParams');
+        const btnText = document.getElementById('btnText');
+        const mainTitle = document.getElementById('mainTitle');
+        // const hint = document.getElementById('hint');
+
+        // แสดงสถานะ
+        function showStatus(message, type = 'info') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.classList.remove('hidden');
+        }
+
+        // อ่าน URL Parameters ทั้งหมด
+        function getUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const params = {};
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            
+            return params;
+        }
+
+        // แสดง URL Parameters
+        function showUrlParameters(params) {
+            if (Object.keys(params).length === 0) {
+                urlParams.innerHTML = `
+                    <h3>URL Parameters</h3>
+                    <p>ไม่มี parameters ใน URL</p>
+                `;
+            } else {
+                let paramsHtml = '<h3>URL Parameters (Facebook)</h3>';
+                for (const [key, value] of Object.entries(params)) {
+                    paramsHtml += `<p><strong>${key}:</strong> ${value}</p>`;
+                }
+                urlParams.innerHTML = paramsHtml;
+                
+                // ส่ง parameters ไปยัง server เพื่อ log
+                sendParametersToServer(params);
+            }
+            urlParams.classList.remove('hidden');
+        }
+
+        // ส่ง parameters ไปยัง server
+        async function sendParametersToServer(params) {
+            try {
+                const queryString = new URLSearchParams(params).toString();
+                const response = await fetch(`/api/params?${queryString}&platform=facebook`);
+                const result = await response.json();
+                console.log('Parameters sent to server (Facebook):', result);
+            } catch (error) {
+                console.error('Error sending parameters to server:', error);
+            }
+        }
+
+        // ปุ่มโหลดและปิดใช้งาน
+        function setButtonLoading(loading) {
+            redirectBtn.disabled = loading;
+            btnText.innerHTML = loading ? '<span class="loading"></span> กำลัง redirect...' : 'เปิด LINE LIFF';
+        }
+
+        // ตรวจสอบว่าเป็น mobile หรือไม่
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // เริ่มต้น LIFF
+        async function initializeLiff() {
+            try {
+                // อ่าน URL parameters ก่อน
+                const params = getUrlParameters();
+                // showUrlParameters(params);
+                
+                // ตรวจสอบว่าไม่ใช่ mobile และมี line_id parameter
+                if (!isMobileDevice() && params.line_id) {
+                    showStatus('ตรวจพบว่าไม่ใช่ mobile device - redirect ไปเพิ่มเพื่อน LINE', 'info');
+                    const lineId = params.line_id;
+                    const lineAddFriendUrl = `https://line.me/R/ti/p/${lineId}`;
+                    
+                    console.log('Redirecting to LINE add friend (non-mobile):', lineAddFriendUrl);
+                    
+                    window.location.href = lineAddFriendUrl;
+                    
+                    return;
+                }
+                
+                // showStatus('กำลังเริ่มต้นระบบ Facebook LIFF...', 'info');
+                
+                // ดึง configuration จาก server
+                const configResponse = await fetch('/api/config');
+                const config = await configResponse.json();
+                const liffId = config.liffId;
+                
+                console.log('Facebook LIFF - Initializing with ID:', liffId);
+                
+                await liff.init({ liffId: liffId });
+                
+                // showStatus('เริ่มต้นระบบ Facebook LIFF สำเร็จ', 'success');
+                // hint.classList.remove('hidden');
+                
+                // ตรวจสอบว่าอยู่ใน external browser
+                // if (!liff.isInClient()) {
+                //     showStatus('พร้อม redirect ไป LINE LIFF', 'info');
+                //     mainTitle.innerHTML = 'พร้อม<b>เปิด LINE</b>';
+                // } else {
+                //     showStatus('กำลังรันใน LINE app', 'info');
+                //     mainTitle.innerHTML = 'กำลังรันใน<b>LINE app</b>';
+                // }
+
+            } catch (error) {
+                console.error('Facebook LIFF initialization failed:', error);
+                showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // ฟังก์ชัน redirect ไปเปิด LINE LIFF ใน LINE app
+        async function redirectToLineLiff() {
+            try {
+                setButtonLoading(true);
+                // showStatus('กำลัง redirect ไปเปิด LINE LIFF...', 'info');
+                // mainTitle.innerHTML = 'กำลัง<b>เปิด LINE</b>...';
+
+                // อ่าน parameters ที่มีอยู่
+                const params = getUrlParameters();
+                
+                // ดึง LIFF ID จาก server
+                const configResponse = await fetch('/api/config');
+                const config = await configResponse.json();
+                const liffId = config.liffId;
+                
+                // สร้าง query string จาก parameters
+                const queryString = new URLSearchParams(params).toString();
+                const query = queryString ? `?${queryString}` : '';
+                
+                // สร้าง LINE LIFF URL พร้อม /line endpoint และ parameters
+                const liffUrl = `https://liff.line.me/${liffId}/line${query}`;
+                
+                console.log('Redirecting from Facebook to LINE LIFF with /line path:', liffUrl);
+                
+                // Redirect ไปยัง LINE LIFF ใน LINE app
+                window.location.href = liffUrl;
+                // setTimeout(() => {
+                //     window.location.href = liffUrl;
+                // }, 1500);
+
+            } catch (error) {
+                console.error('Error in redirect:', error);
+                showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            } finally {
+                setButtonLoading(false);
+            }
+        }
+
+        // Event Listeners
+        redirectBtn.addEventListener('click', redirectToLineLiff);
+
+        // เริ่มต้นแอป
+        window.addEventListener('load', () => {
+            initializeLiff();
+        });
+    </script>
+</body>
+</html>
