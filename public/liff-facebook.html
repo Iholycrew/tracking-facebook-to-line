@@ -237,6 +237,7 @@
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
+
         // เริ่มต้น LIFF
         async function initializeLiff() {
             try {
@@ -244,25 +245,35 @@
                 const params = getUrlParameters();
                 // showUrlParameters(params);
                 
-                // ตรวจสอบว่าไม่ใช่ mobile และมี line_id parameter
-                if (!isMobileDevice() && params.line_id) {
-                    showStatus('ตรวจพบว่าไม่ใช่ mobile device - redirect ไปเพิ่มเพื่อน LINE', 'info');
-                    const lineId = params.line_id;
-                    const lineAddFriendUrl = `https://line.me/R/ti/p/${lineId}`;
+                // ตรวจสอบว่าไม่ใช่ mobile และมี rurl parameter
+                if (!isMobileDevice() && params.rurl) {
+                    console.log('Non-mobile device detected with rurl, redirecting...');
                     
-                    console.log('Redirecting to LINE add friend (non-mobile):', lineAddFriendUrl);
+                    // สร้าง URL parameters ทั้งหมด (ยกเว้น rurl)
+                    const redirectParams = new URLSearchParams();
+                    Object.keys(params).forEach(key => {
+                        if (key !== 'rurl') {
+                            redirectParams.append(key, params[key]);
+                        }
+                    });
                     
-                    window.location.href = lineAddFriendUrl;
+                    // สร้าง URL สำหรับ redirect
+                    const queryString = redirectParams.toString();
+                    const redirectUrl = queryString ? `${params.rurl}?${queryString}` : params.rurl;
                     
+                    console.log('Redirecting to rurl:', redirectUrl);
+                    showStatus('ตรวจพบว่าไม่ใช่ mobile device - redirect ไปยัง URL ที่กำหนด', 'info');
+                    
+                    window.location.href = redirectUrl;
                     return;
                 }
                 
                 // showStatus('กำลังเริ่มต้นระบบ Facebook LIFF...', 'info');
-                
-                // ดึง configuration จาก server
+                // get config from server
                 const configResponse = await fetch('/api/config');
                 const config = await configResponse.json();
                 const liffId = config.liffId;
+                
                 
                 console.log('Facebook LIFF - Initializing with ID:', liffId);
                 
@@ -283,7 +294,17 @@
             } catch (error) {
                 console.error('Facebook LIFF initialization failed:', error);
                 showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
-            }
+            } 
+        }
+
+        // ตรวจสอบว่าเป็น Android หรือไม่
+        function isAndroid() {
+            return /Android/i.test(navigator.userAgent);
+        }
+        
+        // ตรวจสอบว่าเป็น iOS หรือไม่
+        function isIOS() {
+            return /iPhone|iPad|iPod/i.test(navigator.userAgent);
         }
 
         // ฟังก์ชัน redirect ไปเปิด LINE LIFF ใน LINE app
@@ -310,17 +331,34 @@
                 
                 console.log('Redirecting from Facebook to LINE LIFF with /line path:', liffUrl);
                 
-                // Redirect ไปยัง LINE LIFF ใน LINE app
-                window.location.href = liffUrl;
-                // setTimeout(() => {
-                //     window.location.href = liffUrl;
-                // }, 1500);
+                // ใช้วิธีที่ต่างกันสำหรับ Android และ iOS
+                if (isAndroid()) {
+                    // สำหรับ Android ใช้ intent URL
+                    const intentUrl = `intent://liff.line.me/${liffId}/line${query}#Intent;scheme=https;package=jp.naver.line.android;end`;
+                    console.log('Android detected, using intent:', intentUrl);
+                    
+                    // ลองเปิดด้วย intent ก่อน
+                    window.location.href = intentUrl;
+                    
+                    // ถ้า intent ไม่ทำงาน fallback ไปที่ URL ปกติ
+                    // setTimeout(() => {
+                    //     window.location.href = liffUrl;
+                    // }, 1000);
+                } else if (isIOS()) {
+                    // สำหรับ iOS ใช้ HTTPS URL ปกติ (iOS จัดการ Universal Links เอง)
+                    console.log('iOS detected, using standard LIFF URL:', liffUrl);
+                    window.location.href = liffUrl;
+                    
+                } else {
+                    // สำหรับ platform อื่นๆ ใช้ URL ปกติ
+                    window.location.href = liffUrl;
+                }
 
             } catch (error) {
                 console.error('Error in redirect:', error);
                 showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
             } finally {
-                setButtonLoading(false);
+                await liff.closeWindow()
             }
         }
 

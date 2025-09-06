@@ -141,7 +141,7 @@
             </svg>
         </div>
 
-        <h1 id="mainTitle">กรุณาเปิด <b>LINE</b> เพื่อดำเนินการต่อ</h1>
+        <!-- <h1 id="mainTitle">กรุณาเปิด <b>LINE</b> เพื่อดำเนินการต่อ</h1> -->
 
         <button class="btn hidden" id="redirectBtn">
             <span id="btnText">เปิด External Browser</span>
@@ -251,13 +251,13 @@
                     // ตรวจสอบว่ามาจาก Facebook หรือไม่
                     if (isFromFacebook()) {
                         showStatus('มาจาก Facebook - ตรวจพบว่าอยู่ใน LINE app', 'success');
-                        mainTitle.innerHTML = 'กำลัง<b>เปลี่ยนเส้นทาง</b>...';
+                        // mainTitle.innerHTML = 'กำลัง<b>เปลี่ยนเส้นทาง</b>...';
                     } else {
                         showStatus('เปิดโดยตรงใน LINE app', 'info');
-                        mainTitle.innerHTML = 'กำลัง<b>เปลี่ยนเส้นทาง</b>...';
+                        // mainTitle.innerHTML = 'กำลัง<b>เปลี่ยนเส้นทาง</b>...';
                     }
                     
-                    showStatus('เตรียม redirect ไป External Browser...', 'info');
+                    // showStatus('เตรียม redirect ไป External Browser...', 'info');
                     
                     // สร้าง URL พร้อม parameters
                     const queryString = new URLSearchParams(params).toString();
@@ -266,7 +266,7 @@
                     console.log('Preparing to redirect to external browser:', fullExternalUrl);
                     
                     // Redirect ทันทีหลังจากประกอบ parameters เสร็จ
-                    showStatus('กำลัง redirect ไป External Browser...', 'info');
+                    // showStatus('กำลัง redirect ไป External Browser...', 'info');
                     liff.openWindow({
                         url: fullExternalUrl,
                         external: true
@@ -286,8 +286,8 @@
                     // }, 2000);
                     
                 } else {
-                    showStatus('กำลังรันใน External Browser', 'info');
-                    mainTitle.innerHTML = 'กรุณาเปิด <b>LINE</b> เพื่อดำเนินการต่อ';
+                    // showStatus('กำลังรันใน External Browser', 'info');
+                    // mainTitle.innerHTML = 'กรุณาเปิด <b>LINE</b> เพื่อดำเนินการต่อ';
                     
                     // แสดงปุ่ม redirect กลับไป LINE
                     redirectBtn.classList.remove('hidden');
@@ -304,6 +304,8 @@
             } catch (error) {
                 console.error('LINE LIFF initialization failed:', error);
                 showStatus(`เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            } finally {
+                    await liff.closeWindow()
             }
         }
 

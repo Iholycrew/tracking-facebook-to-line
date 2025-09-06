@@ -39,13 +39,29 @@ app.get('/seed', (req, res) => {
         sameSite: 'lax'
     };
 
+    // ดึง prefix จาก parameters (ถ้ามี)
+    const prefix = params.prefix || '';
     console.log('📋 Setting cookies from parameters:', params);
+    console.log('🏷️ Prefix:', prefix || '(no prefix)');
 
-    // Set each query parameter as a cookie
+    // Track cookies that were set
+    const setCookies = {};
+
+    // Set each query parameter as a cookie (with optional prefix)
     Object.keys(params).forEach(key => {
         const value = params[key];
-        res.cookie(key, value, cookieOptions);
-        console.log(`🍪 Cookie set: ${key} = ${value}`);
+        
+        // Skip setting prefix as a cookie
+        if (key === 'prefix') {
+            return;
+        }
+        
+        // Create cookie key with prefix if provided
+        const cookieKey = prefix ? `${prefix}_${key}` : key;
+        
+        res.cookie(cookieKey, value, cookieOptions);
+        setCookies[cookieKey] = value;
+        console.log(`🍪 Cookie set: ${cookieKey} = ${value}`);
     });
 
     // Check if line_id parameter exists for redirect
@@ -61,8 +77,10 @@ app.get('/seed', (req, res) => {
         // Respond with success and cookie information if no line_id
         res.json({
             message: 'Parameters saved as cookies successfully',
-            parameters: params,
-            cookieCount: Object.keys(params).length,
+            prefix: prefix || '(no prefix)',
+            originalParameters: params,
+            setCookies: setCookies,
+            cookieCount: Object.keys(setCookies).length,
             cookieOptions: {
                 maxAge: '30 days',
                 httpOnly: false,
@@ -83,16 +101,47 @@ app.get('/go', (req, res) => {
     console.log('📋 Reading cookies:', cookies);
     console.log('📋 Reading query params:', queryParams);
 
+    // ดึง prefix จาก query parameters
+    const prefix = queryParams.prefix || '';
+    console.log('🏷️ Prefix:', prefix || '(no prefix)');
+
     let redirectUrl;
-    let sourceData;
+    let sourceData = {};
     let dataSource;
 
-    // เงื่อนไขที่ 1: ใช้ cookies หากมี rurl ใน cookies
-    if (cookies.rurl && Object.keys(cookies).length > 0) {
-        redirectUrl = cookies.rurl;
-        sourceData = cookies;
-        dataSource = 'cookies';
-        console.log('✅ Using cookies as data source');
+    // Function to filter cookies by prefix
+    const filterCookiesByPrefix = (cookies, prefix) => {
+        const filtered = {};
+        
+        // ถ้าไม่มี prefix ให้ return object ว่างเลย (ไม่อ่าน cookies)
+        if (!prefix) {
+            return filtered;
+        }
+        
+        const prefixPattern = `${prefix}_`;
+        
+        Object.keys(cookies).forEach(key => {
+            // เอาเฉพาะ cookie ที่ขึ้นต้นด้วย prefix_
+            if (key.startsWith(prefixPattern)) {
+                // ตัด prefix_ ออกจากชื่อ key
+                const cleanKey = key.substring(prefixPattern.length);
+                filtered[cleanKey] = cookies[key];
+            }
+        });
+        
+        return filtered;
+    };
+
+    // Filter cookies by prefix
+    const filteredCookies = filterCookiesByPrefix(cookies, prefix);
+    console.log('🍪 Filtered cookies:', filteredCookies);
+
+    // เงื่อนไขที่ 1: ใช้ cookies หากมี rurl ใน cookies (หลังจาก filter แล้ว)
+    if (filteredCookies.rurl && Object.keys(filteredCookies).length > 0) {
+        redirectUrl = filteredCookies.rurl;
+        sourceData = filteredCookies;
+        dataSource = 'cookies' + (prefix ? ` (prefix: ${prefix})` : '');
+        console.log('✅ Using filtered cookies as data source');
     }
     // เงื่อนไขที่ 2: ใช้ query parameters หากไม่สามารถอ่าน cookies หรือไม่มี rurl ใน cookies
     else if (queryParams.rurl) {
@@ -105,16 +154,18 @@ app.get('/go', (req, res) => {
     else {
         return res.status(400).json({
             error: 'No rurl found in cookies or query parameters',
-            cookies: cookies,
+            prefix: prefix || '(no prefix)',
+            filteredCookies: filteredCookies,
+            allCookies: cookies,
             queryParams: queryParams,
             message: 'Please provide rurl in either cookies (via /seed) or query parameters'
         });
     }
     
-    // Convert all data (except rurl) to query parameters
+    // Convert all data (except rurl and prefix) to query parameters
     const params = new URLSearchParams();
     Object.keys(sourceData).forEach(key => {
-        if (key !== 'rurl') { // Exclude rurl from parameters
+        if (key !== 'rurl' && key !== 'prefix') { // Exclude rurl and prefix from parameters
             params.append(key, sourceData[key]);
             console.log(`📤 Adding parameter from ${dataSource}: ${key} = ${sourceData[key]}`);
         }
